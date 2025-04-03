@@ -10,8 +10,11 @@ QEMU = qemu-system-x86_64
 all: run
 
 # Choose which boot sector to use
+
 # BOOTSECT = boot/boot_sect_memory.bin
-BOOTSECT = boot/boot_sect_main.bin
+# BOOTSECT = boot/boot_sect_main.bin
+# BOOTSECT = boot/boot_sect_disk.bin
+BOOTSECT = boot/boot_sect_pm.bin
 
 # Rule to build the OS image
 os-image.bin: $(BOOTSECT)
@@ -27,7 +30,13 @@ os-image.bin: $(BOOTSECT)
 # boot/boot_sect_stack.bin: boot/boot_sect_stack.asm
 # 	$(ASM) $< -f bin -o $@
 
-boot/boot_sect_main.bin: boot/boot_sect_main.asm boot/print.asm boot/print_hex.asm
+# boot/boot_sect_main.bin: boot/boot_sect_main.asm boot/print.asm boot/print_hex.asm
+# 	$(ASM) $< -f bin -o $@
+
+# boot/boot_sect_disk.bin: boot/boot_sect_disk.asm boot/print.asm boot/print_hex.asm boot/disk.asm
+# 	$(ASM) $< -f bin -o $@
+
+boot/boot_sect_pm.bin: boot/boot_sect_pm.asm boot/print.asm boot/gdt.asm boot/32bit-print.asm boot/switch_pm.asm
 	$(ASM) $< -f bin -o $@
 
 # Rule to run our OS in QEMU
