@@ -9,10 +9,29 @@
 ;   The GDT descriptor contains the size and address of the table
 ; ----------------------------------------------------------------------------
 
-gdt_start: ; don't remove the labels, they're needed to compute sizes and jumps
-    ; the GDT starts with a null 8-byte
-    dd 0x0 ; 4 byte
-    dd 0x0 ; 4 byte
+gdt_start:
+    ; Null descriptor (required)
+    dd 0x0
+    dd 0x0
+
+    ; Code descriptor:
+    ;   Base = 0, Limit = 4GB, Executable, Readable, Accessed = 0,
+    ;   DPL = 0, Present = 1, 32-bit, 4K granularity.
+    dw 0xFFFF             ; Limit low (0xFFFF)
+    dw 0x0000             ; Base low (0x0000)
+    db 0x00               ; Base middle
+    db 10011010b          ; Access byte: present, ring 0, code segment, executable, readable
+    db 11001111b          ; Flags: 4K granularity, 32-bit, Limit high (0xF)
+    db 0x00               ; Base high
+
+    ; Data descriptor:
+    ;   Base = 0, Limit = 4GB, Data segment, Read/Write, DPL = 0, Present = 1.
+    dw 0xFFFF             ; Limit low
+    dw 0x0000             ; Base low
+    db 0x00               ; Base middle
+    db 10010010b          ; Access byte: present, ring 0, data segment, writable
+    db 11001111b          ; Flags: 4K granularity, 32-bit, Limit high
+    db 0x00               ; Base high
 
 ; GDT for code segment. base = 0x00000000, length = 0xfffff
 ; for flags, refer to os-dev.pdf document, page 36

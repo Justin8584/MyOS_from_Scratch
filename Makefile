@@ -1,6 +1,6 @@
-C_SOURCES = kernel/kernel.c drivers/screen.c cpu/ports.c
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c)
 HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h)
-OBJ = ${C_SOURCES:.c=.o}
+OBJ = ${C_SOURCES:.c=.o }
 
 # Change this if your cross-compiler is somewhere else
 CC = x86_64-elf-gcc
@@ -25,7 +25,7 @@ kernel.elf: boot/kernel_entry.o ${OBJ}
 	x86_64-elf-ld -m elf_i386 -o $@ -Ttext 0x1000 $^ 
 
 run: os-image.bin
-	qemu-system-x86_64 -fda os-image.bin
+	qemu-system-x86_64 -fda os-image.bin -display curses -no-reboot 
 
 # Open the connection to qemu and load our kernel-object file with symbols
 debug: os-image.bin kernel.elf
@@ -33,7 +33,6 @@ debug: os-image.bin kernel.elf
 	${GDB} -ex "target remote localhost:1234" -ex "symbol-file kernel.elf"
 
 # Generic rules for wildcards
-# To make an object, always compile from its .c
 %.o: %.c ${HEADERS}
 	${CC} ${CFLAGS} -c $< -o $@
 

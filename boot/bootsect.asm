@@ -36,7 +36,7 @@ load_kernel:
 BEGIN_PM:
     mov ebx, MSG_PROT_MODE
     call print_string_pm
-    call KERNEL_OFFSET ; Give control to the kernel
+    jmp 0x08:KERNEL_OFFSET
     jmp $ ; Stay here when the kernel returns control to us (if ever)
 
 
